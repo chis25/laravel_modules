@@ -1,0 +1,17 @@
+{"path":"Requests/{MODEL}StoreRequest.php"}
+<?php
+
+namespace App\Modules\{NAMESPACE}\Requests;
+
+use App\Modules\{NAMESPACE}\Models\{MODEL};
+use Illuminate\Foundation\Http\FormRequest;
+
+final class {MODEL}StoreRequest extends FormRequest
+{
+    public function rules()
+    {
+        return [
+            'title' => 'required',
+        ];
+    }
+}

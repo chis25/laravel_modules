@@ -1,0 +1,51 @@
+{"path":"Controllers/{MODEL}Controller.php"}
+<?php
+
+namespace App\Modules\{NAMESPACE}\Controllers;
+
+use App\Http\Controllers\Controller;
+use App\Modules\{NAMESPACE}\Models\{MODEL};
+use App\Modules\{NAMESPACE}\Repositories\{MODEL}Repository;
+use App\Modules\{NAMESPACE}\Requests\{MODEL}StoreRequest;
+use App\Modules\{NAMESPACE}\Requests\{MODEL}UpdateRequest;
+use App\Modules\{NAMESPACE}\Services\{MODEL}Service;
+
+class {MODEL}Controller extends Controller
+{
+    public function index()
+    {
+        ${OBJECTS} = {MODEL}Repository::all();
+        return view('{DOMAIN}::index', compact('{OBJECTS}'));
+    }
+    public function create()
+    {
+        return view('{DOMAIN}::create');
+    }
+    public function store({MODEL}StoreRequest $request)
+    {
+        ${OBJECT} = {MODEL}Service::create($request);
+        return redirect()->route('{DOMAIN}::show', compact('{OBJECT}'));
+    }
+    public function show({MODEL} ${OBJECT})
+    {
+        return view('{DOMAIN}::show', compact('{OBJECT}'));
+    }
+    public function edit({MODEL} ${OBJECT})
+    {
+        return view('{DOMAIN}::edit', compact('{OBJECT}'));
+    }
+    public function update({MODEL}UpdateRequest $request, {MODEL} ${OBJECT})
+    {
+        {MODEL}Service::update($request, ${OBJECT});
+        return redirect()->route('{DOMAIN}::show', compact('{OBJECT}'));
+    }
+    public function delete({MODEL} ${OBJECT})
+    {
+        return view('{DOMAIN}::delete', compact('{OBJECT}'));
+    }
+    public function destroy({MODEL} ${OBJECT})
+    {
+        {MODEL}Service::delete(${OBJECT});
+        return redirect()->route('{DOMAIN}::index');
+    }
+} 

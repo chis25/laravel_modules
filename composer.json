@@ -1,0 +1,21 @@
+{
+    "name": "chis/modules",
+    "description": "Laravel Modules",
+    "type": "library",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "ChIS\\Modules\\": "src/"
+        }
+    },
+    "require": {
+        "php": "^8.0"
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "ChIS\\Modules\\Providers\\ModuleServiceProvider"
+            ]
+        }
+    }
+}

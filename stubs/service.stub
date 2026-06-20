@@ -1,0 +1,24 @@
+{"path":"Services/{MODEL}Service.php"}
+<?php
+
+namespace App\Modules\{NAMESPACE}\Services;
+
+use App\Modules\{NAMESPACE}\Models\{MODEL};
+use App\Modules\{NAMESPACE}\Requests\{MODEL}StoreRequest;
+use App\Modules\{NAMESPACE}\Requests\{MODEL}UpdateRequest;
+
+final class {MODEL}Service
+{
+    public static function create({MODEL}StoreRequest $request)
+    {
+        return {MODEL}::create($request->validated());
+    }
+    public static function update({MODEL}UpdateRequest $request, {MODEL} ${OBJECT})
+    {
+        return ${OBJECT}->update($request->validated());
+    }
+    public static function delete({MODEL} ${OBJECT})
+    {
+        return ${OBJECT}->delete();
+    }
+}

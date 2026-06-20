@@ -1,0 +1,16 @@
+{"path":"Views/index.blade.php"}
+<h1>{{ __('{DOMAIN}::title') }}</h1>
+
+<div>
+    @foreach(${OBJECTS} as ${OBJECT})
+        <div>
+            <a href="{{ route('{DOMAIN}::show', compact('{OBJECT}')) }}">
+                {{ ${OBJECT}->title }}
+            </a>
+        </div>
+    @endforeach
+</div>
+
+<div>
+    <a href="{{ route('{DOMAIN}::create') }}">{{ __('Add') }}</a>
+</div>

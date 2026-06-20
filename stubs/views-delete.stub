@@ -1,0 +1,8 @@
+{"path":"Views/delete.blade.php"}
+<form action="{{ route('{DOMAIN}::destroy', compact('{OBJECT}')) }}" method="post">
+    @csrf
+    @method('DELETE')
+    <button type="submit">
+        {{ __('Delete') }}
+    </button>
+</form>

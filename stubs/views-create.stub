@@ -1,0 +1,21 @@
+{"path":"Views/create.blade.php"}
+@if ($errors->any())
+    @foreach ($errors->all() as $error)
+        <div>
+            {!! $error !!}
+        </div>
+    @endforeach
+@endif
+
+<form action="{{route('{DOMAIN}::store')}}" method="post">
+    @csrf
+    <div>
+        <label for="title">
+            {{ __('{DOMAIN}::fields.title') }}
+        </label>
+        <input name="title" id="title" type="text" value="{{ old('title') }}" required>
+    </div>
+    <button type="submit">
+        {{ __('Save') }}
+    </button>
+</form>

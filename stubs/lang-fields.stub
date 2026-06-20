@@ -1,0 +1,6 @@
+{"path":"Langs/{LANG}/fields.php"}
+<?php
+
+return [
+    "title" => "Title"
+];

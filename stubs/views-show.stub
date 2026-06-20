@@ -1,0 +1,7 @@
+{"path":"Views/show.blade.php"}
+<h1>{{ ${OBJECT}->title }}</h1>
+
+<div>
+    <a href="{{ route('{DOMAIN}::edit', compact('{OBJECT}')) }}">{{ __('Edit') }}</a>
+    <a href="{{ route('{DOMAIN}::delete', compact('{OBJECT}')) }}">{{ __('Delete') }}</a>
+</div>

@@ -1,0 +1,13 @@
+{"path":"Repositories/{MODEL}Repository.php"}
+<?php
+
+namespace App\Modules\{NAMESPACE}\Repositories;
+
+use App\Modules\{NAMESPACE}\Models\{MODEL};
+
+final class {MODEL}Repository
+{
+    public static function all($paginate = 50) {
+        return $paginate ? {MODEL}::paginate($paginate) : {MODEL}::all();
+    }
+}

@@ -1,0 +1,15 @@
+{"path":"Models/{MODEL}.php"}
+<?php
+
+namespace App\Modules\{NAMESPACE}\Models;
+
+use App\Modules\{NAMESPACE}\Requests\{MODEL}UpdateRequest;
+use Illuminate\Database\Eloquent\Model;
+
+class {MODEL} extends Model
+{
+    protected $table = '{TABLE}';
+    protected $fillable = [
+        'title',
+    ];
+}

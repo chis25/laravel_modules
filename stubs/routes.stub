@@ -1,0 +1,18 @@
+{"path":"Routes/web.php"}
+<?php
+
+use App\Modules\{NAMESPACE}\Controllers\{MODEL}Controller;
+use Illuminate\Support\Facades\Route;
+
+Route::prefix('{ROUTE}')->controller({MODEL}Controller::class)->name('{DOMAIN}::')->group(function () {
+    Route::get('', 'index')       ->name('index');
+    Route::get('create', 'create')->name('create');
+    Route::post('store', 'store') ->name('store');
+    Route::prefix('{{OBJECT}}')->whereNumber('{OBJECT}')->group(function(){
+        Route::get('', 'show')             ->name('show');
+        Route::get('edit', 'edit')         ->name('edit');
+        Route::put('update', 'update')     ->name('update');
+        Route::get('delete', 'delete')     ->name('delete');
+        Route::delete('destroy', 'destroy')->name('destroy');
+    });
+});

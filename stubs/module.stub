@@ -1,0 +1,4 @@
+{"path":"module.php"}
+<?php
+
+return [__DIR__, '{DOMAIN}'];
