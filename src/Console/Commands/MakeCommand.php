@@ -11,7 +11,7 @@ use Illuminate\Support\Str;
 
 final class MakeCommand extends Command
 {
-    protected $signature = 'module:make {module}';
+    protected $signature = 'module:make {module} {--preset=all} {--force} {--skip}';
     protected $description = 'Create a new module';
 
     public function __construct(private readonly Filesystem $fs)
@@ -21,45 +21,93 @@ final class MakeCommand extends Command
 
     public function handle(): int
     {
-        $parts = explode('.', str_replace(['/', '\\', '.'], '.', $this->argument('module')));
-        $model = Str::studly(Str::singular(end($parts)));
-        $module = implode('\\Modules\\', $parts);
-        $stubs = $this->fs->exists($p = resource_path('modules/stubs')) ? $p : __DIR__ . '/../../stubs';
-        $params = $this->params($module, $model);
-        collect($this->fs->allFiles($stubs))->each(function ($file) use ($params, $module) {
-            $content = str_replace(array_map(fn($k) => '{' . $k . '}', array_keys($params)), $params, $this->fs->get($file));
-            $lines = explode("\n", $content);
-            $config = json_decode(trim(array_shift($lines)), true);
-            if (!$path = $config['path'] ?? null) {
-                $this->error("Missing path in {$file->getFilename()}");
-                return;
+        $module     = $this->argument('module');
+        $preset     = $this->option('preset');
+        $force      = $this->option('force');
+        $skip       = $this->option('skip');
+        $replaces   = $this->makeReplaces($module);
+        $files      = [];
+        $has_errors = false;
+
+        if ($replaces['{PARENT}']) {
+            $this->call('module:make', ['module' => $replaces['{PARENT}'], '--preset' => config('modules.parent_preset')]);
+        }
+
+        $this->info("Make module {$replaces['{DOMAIN}']}");
+
+        $stubs = config("modules.presets.{$preset}", array_keys(config('modules.stubs', [])));
+        foreach ($stubs as $stub) {
+            $src = $this->getStubFile($stub);
+            if (!$src) {
+                $this->error("Stub '{$stub}' not found");
+                $has_errors = true;
+                continue;
             }
-            $target = app_path("Modules/{$module}/{$path}");
-            $target = str_replace('\\', '/', $target);
-            // if (!$this->fs->exists($target)) {
-            $this->fs->ensureDirectoryExists(dirname($target));
-            $this->fs->put($target, implode("\n", $lines));
-            $this->line("Created: {$target}");
-            // }
-        });
+            $dst = config("modules.stubs.{$stub}", false);
+            if (!$dst) {
+                $this->error("Missing path for stub '{$stub}'");
+                $has_errors = true;
+                continue;
+            }
+            $dst = app_path("Modules/{$replaces['{NAMESPACE}']}/{$dst}")
+            |> (fn($s) => $this->replace($replaces, $s));
+            $files[$src] = $dst;
+        }
+
+        if (!$has_errors || $skip) {
+            foreach ($files as $src => $dst) {
+                if ($this->fs->exists($dst) && !$force) continue;
+                $content = $this->fs->get($src) |> (fn($s) => $this->replace($replaces, $s));
+                $this->fs->ensureDirectoryExists(dirname($dst));
+                $this->fs->put($dst, $content);
+                $this->line("Created: {$dst}");
+            };
+        }
+
         return 0;
     }
 
-    private function params(string $module, string $model): array
+    private function makeReplaces($module): array
     {
-        $domain = str_replace('.modules.', '.', strtolower(str_replace(['/', '\\'], '.', $module)));
+        $module = str_replace(['/', '\\'], '.', $module);
+        $namespace = str_replace('.', '\\Modules\\', $module);
+        $domain = strtolower($module);
+        $parts = explode('.', $module);
+        $model = array_pop($parts) |> Str::singular(...);
         $object = Str::snake($model);
         $objects = Str::plural($object);
+        $parent = count($parts) ? implode('.', $parts) : false;
         return [
-            'NAMESPACE' => $module,
-            'DOMAIN'    => $domain,
-            'MODEL'     => $model,
-            'OBJECT'    => $object,
-            'OBJECTS'   => $objects,
-            'TABLE'     => str_replace('.', '_', $domain),
-            'ROUTE'     => str_replace('.', '/', $domain),
-            'DATETIME'  => Carbon::now()->format('Y_m_d_His_u'),
-            'LANG'      => config('modules.lang', 'ru'),
+            '{NAMESPACE}' => $namespace,
+            '{DOMAIN}'    => $domain,
+            '{MODEL}'     => $model,
+            '{OBJECT}'    => $object,
+            '{OBJECTS}'   => $objects,
+            '{TABLE}'     => str_replace('.', '_', $domain),
+            '{ROUTE}'     => str_replace('.', '/', $domain),
+            '{DATETIME}'  => Carbon::now()->format('Ymd_His_u'),
+            '{LANG}'      => config('modules.lang', 'ru'),
+            '{PARENT}'    => $parent,
         ];
+    }
+
+    private function replace($replaces, $subject): string
+    {
+        return str_replace(array_keys($replaces), $replaces, $subject);
+    }
+
+    private function getStubFile(string $stub): string|bool
+    {
+        $paths = [
+            resource_path('modules/stubs'),
+            __DIR__ . '/../../../stubs',
+        ];
+        foreach ($paths as $path) {
+            $file = "{$path}/{$stub}.stub";
+            if (file_exists($file)) {
+                return $file;
+            }
+        }
+        return false;
     }
 }

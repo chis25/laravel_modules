@@ -1,4 +1,3 @@
-{"path":"Routes/web.php"}
 <?php
 
 use App\Modules\{NAMESPACE}\Controllers\{MODEL}Controller;

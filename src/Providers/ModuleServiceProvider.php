@@ -14,20 +14,21 @@ final class ModuleServiceProvider extends ServiceProvider
 
     public function register(): void
     {
-        $this->scan(app_path('Modules'));
+        $this->mergeConfigFrom(__DIR__ . '/../../config/modules.php', 'modules');
         $this->commands([\ChIS\Modules\Console\Commands\MakeCommand::class]);
         $this->publishes([
             __DIR__ . '/../../stubs' => resource_path('modules/stubs'),
-            __DIR__ . '/../Config/modules.php' => config_path('modules.php')
+            __DIR__ . '/../../config/modules.php' => config_path('modules.php'),
         ], 'modules');
+        $this->scan(app_path('Modules'));
     }
 
     private function scan(string $root): void
     {
         foreach (glob($root . '/*/module.php') as $file) {
-            [$moduleDir, $namespace] = include $file;
-            is_dir($moduleDir . '/Modules') && $this->scan($moduleDir . '/Modules');
-            $this->modules[$moduleDir] = $namespace;
+            [$directory, $namespace] = include $file;
+            is_dir($directory . '/Modules') && $this->scan($directory . '/Modules');
+            $this->modules[$directory] = $namespace;
         }
     }
 

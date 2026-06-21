@@ -1,4 +1,3 @@
-{"path":"Controllers/{MODEL}Controller.php"}
 <?php
 
 namespace App\Modules\{NAMESPACE}\Controllers;
@@ -12,9 +11,13 @@ use App\Modules\{NAMESPACE}\Services\{MODEL}Service;
 
 class {MODEL}Controller extends Controller
 {
+    public function __construct(
+        private readonly {MODEL}Repository $repository,
+        private readonly {MODEL}Service $service
+    ) {}
     public function index()
     {
-        ${OBJECTS} = {MODEL}Repository::all();
+        ${OBJECTS} = $this->repository->all();
         return view('{DOMAIN}::index', compact('{OBJECTS}'));
     }
     public function create()
@@ -23,7 +26,7 @@ class {MODEL}Controller extends Controller
     }
     public function store({MODEL}StoreRequest $request)
     {
-        ${OBJECT} = {MODEL}Service::create($request);
+        ${OBJECT} = $this->service->create($request);
         return redirect()->route('{DOMAIN}::show', compact('{OBJECT}'));
     }
     public function show({MODEL} ${OBJECT})
@@ -36,7 +39,7 @@ class {MODEL}Controller extends Controller
     }
     public function update({MODEL}UpdateRequest $request, {MODEL} ${OBJECT})
     {
-        {MODEL}Service::update($request, ${OBJECT});
+        $this->service->update($request, ${OBJECT});
         return redirect()->route('{DOMAIN}::show', compact('{OBJECT}'));
     }
     public function delete({MODEL} ${OBJECT})
@@ -45,7 +48,7 @@ class {MODEL}Controller extends Controller
     }
     public function destroy({MODEL} ${OBJECT})
     {
-        {MODEL}Service::delete(${OBJECT});
+        $this->service->delete(${OBJECT});
         return redirect()->route('{DOMAIN}::index');
     }
 } 

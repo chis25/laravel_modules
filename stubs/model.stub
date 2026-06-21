@@ -1,4 +1,3 @@
-{"path":"Models/{MODEL}.php"}
 <?php
 
 namespace App\Modules\{NAMESPACE}\Models;

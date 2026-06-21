@@ -1,5 +1,5 @@
 {
-    "name": "chis/modules",
+    "name": "chis/laravel-modules",
     "description": "Laravel Modules",
     "type": "library",
     "license": "MIT",
@@ -9,7 +9,7 @@
         }
     },
     "require": {
-        "php": "^8.0"
+        "php": "^8.5"
     },
     "extra": {
         "laravel": {
@@ -17,5 +17,7 @@
                 "ChIS\\Modules\\Providers\\ModuleServiceProvider"
             ]
         }
-    }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
 }

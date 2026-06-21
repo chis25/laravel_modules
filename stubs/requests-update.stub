@@ -1,4 +1,3 @@
-{"path":"Requests/{MODEL}UpdateRequest.php"}
 <?php
 
 namespace App\Modules\{NAMESPACE}\Requests;
